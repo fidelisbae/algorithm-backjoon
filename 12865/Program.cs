@@ -6,15 +6,21 @@ namespace _12865
     {
         public int Value
         {
-            get; private set;
+            get; set;
         }
 
-        public int Weight { get; private set; }
+        public int Weight { get; set; }
 
-        public Item(int value, int weight)
+        public Item(int weight, int value)
         {
             Value = value;
             Weight = weight;
+        }
+
+        public Item()
+        {
+            Value = 0;
+            Weight = 0;
         }
     }
 
@@ -40,10 +46,25 @@ namespace _12865
         {
             GetInput(out int totalNumber, out int maxWeight, out Item[] items);
 
-            int totalValue = 0;
+            Item[] dp = new Item[totalNumber + 1];
+            Array.Fill(dp, new Item());
 
-            foreach (Item item in items)
+            for (int i = 1; i <= totalNumber; i++)
             {
+                for (int j = 0; j < totalNumber; j++)
+                {
+                    if (items[j].Value + dp[i - 1].Value > dp[i].Value && items[j].Weight + dp[i - 1].Weight <= maxWeight)
+                    {
+                        dp[i].Value = items[j].Value + dp[i - 1].Value;
+                        dp[i].Weight = items[j].Weight + dp[i - 1].Weight;
+                    }
+                }
+            }
+
+            foreach (Item item in dp)
+            {
+                Console.WriteLine(item.Value);
+                Console.WriteLine(item.Weight);
             }
         }
     }
