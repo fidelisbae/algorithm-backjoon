@@ -36,13 +36,13 @@ namespace _1003
                     dp[j] = new Fibo();
                 }
 
-                if (dp.Length == 0)
+                if (N == 0)
                 {
                     sb.AppendLine("1 0");
                     continue;
                 }
 
-                if (dp.Length == 1)
+                if (N == 1)
                 {
                     sb.AppendLine("0 1");
                     continue;
