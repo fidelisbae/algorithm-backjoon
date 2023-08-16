@@ -10,11 +10,11 @@ namespace _1966
     {
         private static void Main(string[] args)
         {
-            int testCase = int.Parse(Console.ReadLine());
+            int testCase = int.Parse(Console.ReadLine()!);
             for (int i = 0; i < testCase; i++)
             {
-                string firstInput = Console.ReadLine();
-                string secondInput = Console.ReadLine();
+                string firstInput = Console.ReadLine()!;
+                string secondInput = Console.ReadLine()!;
 
                 int numbers = int.Parse(firstInput.Split(" ")[0]);
                 int target = int.Parse(firstInput.Split(' ')[1]);
