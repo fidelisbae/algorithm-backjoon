@@ -30,8 +30,16 @@ namespace _9655
 
             for (int i = 0; i <= stones - 3; i++)
             {
-                dp[i + 1] = dp[i] ? false : true;
-                dp[i + 3] = dp[i] ? true : false;
+                if (dp[i])
+                {
+                    dp[i + 1] = false;
+                    dp[i + 3] = false;
+                }
+                else
+                {
+                    dp[i + 1] = true;
+                    dp[i + 3] = true;
+                }
             }
 
             string answer = dp[stones] ? "SK" : "CY";

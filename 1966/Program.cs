@@ -1,83 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Channels;
 
-namespace _1966
+namespace _9655
 {
     internal class Program
     {
+        private static int GetInput()
+        {
+            int input = int.Parse(Console.ReadLine()!);
+
+            return input;
+        }
+
         private static void Main(string[] args)
         {
-            int testCase = int.Parse(Console.ReadLine()!);
-            for (int i = 0; i < testCase; i++)
+            int stones = GetInput();
+
+            // dp 배열 돌갯수 + 1
+            var dp = new bool[stones + 1];
+            // false 로 초기화
+            // false : 선공이 지는 경우
+            // true : 선공이 이기는 경우
+            Array.Fill(dp, false);
+
+            // 돌 갯수 적을때 예외처리
+            if (stones >= 1)
             {
-                string firstInput = Console.ReadLine()!;
-                string secondInput = Console.ReadLine()!;
+                dp[1] = true;
+            }
 
-                int numbers = int.Parse(firstInput.Split(" ")[0]);
-                int target = int.Parse(firstInput.Split(' ')[1]);
+            // 돌 갯수 적을때 예외처리
+            if (stones >= 3)
+            {
+                dp[3] = true;
+            }
 
-                var list = new LinkedList<int[]>();
-                int count = 0;
-
-                for (int j = 0; j < numbers; j++)
+            // 메인 로직
+            // 0 index 부터 시작해서 돌 갯수를 +1, +3 햇을때 현재 index 의 value 가 false 면 true 로 바꿔줌, true 면 false 로 바꿔줌
+            for (int i = 0; i <= stones - 3; i++)
+            {
+                if (dp[i])
                 {
-                    if (j == target)
-                    {
-                        list.AddLast(new int[] { int.Parse(secondInput.Split(" ")[j]), 1 });
-                    }
-                    else
-                    {
-                        list.AddLast(new int[] { int.Parse(secondInput.Split(" ")[j]), 0 });
-                    }
+                    dp[i + 1] = false;
+                    dp[i + 3] = false;
                 }
-
-                while (list.Count > 0)
+                else
                 {
-                    var temp = list.First;
-                    bool isTarget = false;
-                    bool back = false;
-
-                    if (temp.Value[1] == 1)
-                    {
-                        isTarget = true;
-                    }
-
-                    var current = temp.Next;
-
-                    while (current != null)
-                    {
-                        if (temp.Value[0] < current.Value[0])
-                        {
-                            back = true;
-                            break;
-                        }
-                        current = current.Next;
-                    }
-
-                    if (back)
-                    {
-                        list.RemoveFirst();
-                        list.AddLast(temp);
-                    }
-                    else
-                    {
-                        if (isTarget)
-                        {
-                            Console.WriteLine(count + 1);
-                            list.RemoveFirst();
-                            break;
-                        }
-                        else
-                        {
-                            list.RemoveFirst();
-                            count++;
-                        }
-                    }
+                    dp[i + 1] = true;
+                    dp[i + 3] = true;
                 }
             }
+
+            string answer = dp[stones] ? "SK" : "CY";
+            Console.WriteLine(answer);
         }
     }
 }
