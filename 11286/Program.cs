@@ -15,8 +15,12 @@ namespace _11286
                 if (posMinHeap[currentIndex] < posMinHeap[currentIndex / 2])
                 {
                     (posMinHeap[currentIndex], posMinHeap[currentIndex / 2]) = (posMinHeap[currentIndex / 2], posMinHeap[currentIndex]);
+                    currentIndex /= 2;
                 }
-                currentIndex /= 2;
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -30,8 +34,12 @@ namespace _11286
                 if (negMaxHeap[currentIndex] > negMaxHeap[currentIndex / 2])
                 {
                     (negMaxHeap[currentIndex], negMaxHeap[currentIndex / 2]) = (negMaxHeap[currentIndex / 2], negMaxHeap[currentIndex]);
+                    currentIndex /= 2;
                 }
-                currentIndex /= 2;
+                else
+                {
+                    break;
+                }
             }
         }
 
