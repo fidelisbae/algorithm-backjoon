@@ -5,6 +5,53 @@
         private static int row;
         private static int column;
         private static int[,] map;
+        private static int[] rowDirection = new int[4] { 1, -1, 0, 0 };
+        private static int[] columnDirection = new int[4] { 0, 0, 1, -1 };
+        private static int count = 0;
+        private static (int r, int c) last = (-1, -1);
+
+        private static bool IsValid(int r, int c)
+        {
+            return r >= 0 && c >= 0 && r < row && c < column && map[r, c] == 0;
+        }
+
+        private static void BFS(Queue<(int, int)> queue)
+        {
+            bool isDequeue = false;
+            while (queue.Count > 0)
+            {
+                (int r, int c) current = queue.Dequeue();
+
+                if (current == last)
+                {
+                    if (isDequeue)
+                    {
+                        count++;
+                        isDequeue = false;
+                    }
+                    if (queue.Count > 0)
+                    {
+                        queue.Enqueue(last);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    (int r, int c) near = (current.r + rowDirection[i], current.c + columnDirection[i]);
+
+                    if (IsValid(near.r, near.c))
+                    {
+                        isDequeue = true;
+                        queue.Enqueue(near);
+                        map[near.r, near.c] = 1;
+                    }
+                }
+            }
+        }
 
         private static void GetInput()
         {
@@ -29,17 +76,42 @@
         {
             GetInput();
 
+            var queue = new Queue<(int, int)>();
+            bool isFindZero = false;
+
             for (int i = 0; i < row; i++)
             {
                 for (int j = 0; j < column; j++)
                 {
+                    if (map[i, j] == 1)
+                    {
+                        queue.Enqueue((i, j));
+                    }
                 }
             }
-        }
 
-        // 1. map 전체를 순회하면서 익은 토마토를 발견하면 큐를 만들어서 저장하고 큐를 리스트에 저장
-        // 2. 순회가 끝나면 리스트에서 큐를 꺼내면서 큐에서 요소를 꺼내서 bfs 진행
-        // 3. count++
-        // 4. bfs 가 종료될때까지 진행하고 count return
+            queue.Enqueue(last);
+            BFS(queue);
+
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < column; j++)
+                {
+                    if (map[i, j] == 0)
+                    {
+                        isFindZero = true;
+                    }
+                }
+            }
+
+            if (isFindZero)
+            {
+                Console.WriteLine(-1);
+            }
+            else
+            {
+                Console.WriteLine(count);
+            }
+        }
     }
 }
