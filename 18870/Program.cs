@@ -9,42 +9,37 @@ namespace _18870
             var sb = new StringBuilder();
             int N = int.Parse(Console.ReadLine()!);
             string[] input = Console.ReadLine()!.Split(" ");
+            var origin = new int[N];
+            var set = new HashSet<int>();
             var dic = new Dictionary<int, int>();
-            var array = new int[N];
-            var sortedArray = new int[N];
             var compression = new int[N];
 
             for (int i = 0; i < N; i++)
             {
-                array[i] = int.Parse(input[i]);
-                sortedArray[i] = int.Parse(input[i]);
+                origin[i] = int.Parse(input[i]);
+                set.Add(origin[i]);
             }
 
-            Array.Sort(sortedArray);
-            var set = new HashSet<int>(sortedArray);
-            var distinctArray = set.ToArray();
+            var list = new List<int>(set);
+            list.Sort();
 
-            for (int i = 0; i < distinctArray.Length; i++)
+            for (int i = 0; i < list.Count; i++)
             {
-                dic[distinctArray[i]] = i;
-            }
-
-            for (int i = 0; i < N; i++)
-            {
-                compression[i] = dic[array[i]];
+                dic[list[i]] = i;
             }
 
             for (int i = 0; i < N; i++)
             {
                 if (i == N - 1)
                 {
-                    sb.Append($"{compression[i]}");
+                    sb.AppendLine($"{dic[origin[i]]}");
                 }
                 else
                 {
-                    sb.Append($"{compression[i]} ");
+                    sb.Append($"{dic[origin[i]]} ");
                 }
             }
+
             Console.WriteLine(sb.ToString());
         }
     }
