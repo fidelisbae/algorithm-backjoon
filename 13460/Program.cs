@@ -47,31 +47,33 @@
             {
                 if (map[nextRed.r - 1, nextRed.c] == '#')
                 {
+                    current.Red = nextRed;
                     break;
                 }
                 if (map[nextRed.r - 1, nextRed.c] == 'O')
                 {
                     current.Out = 1;
+                    current.Red = (nextRed.r - 1, nextRed.c);
                     break;
                 }
                 nextRed.r--;
             }
-            current.Red = nextRed;
 
             while (nextBlue.r >= 1)
             {
                 if (map[nextBlue.r - 1, nextBlue.c] == '#')
                 {
+                    current.Blue = nextBlue;
                     break;
                 }
                 if (map[nextBlue.r - 1, nextBlue.c] == 'O')
                 {
                     current.Out = -1;
+                    current.Blue = (nextBlue.r - 1, nextBlue.c);
                     break;
                 }
                 nextBlue.r--;
             }
-            current.Blue = nextBlue;
 
             if (current.Red == current.Blue && current.Out != -1)
             {
@@ -96,31 +98,33 @@
             {
                 if (map[nextRed.r + 1, nextRed.c] == '#')
                 {
+                    current.Red = nextRed;
                     break;
                 }
                 if (map[nextRed.r + 1, nextRed.c] == 'O')
                 {
                     current.Out = 1;
+                    current.Red = (nextRed.r + 1, nextRed.c);
                     break;
                 }
                 nextRed.r++;
             }
-            current.Red = nextRed;
 
             while (nextBlue.r < map.GetLength(0) - 1)
             {
                 if (map[nextBlue.r + 1, nextBlue.c] == '#')
                 {
+                    current.Blue = nextBlue;
                     break;
                 }
                 if (map[nextBlue.r + 1, nextBlue.c] == 'O')
                 {
                     current.Out = -1;
+                    current.Blue = (nextBlue.r + 1, nextBlue.c);
                     break;
                 }
                 nextBlue.r++;
             }
-            current.Blue = nextBlue;
 
             if (current.Red == current.Blue && current.Out != -1)
             {
@@ -145,31 +149,33 @@
             {
                 if (map[nextRed.r, nextRed.c - 1] == '#')
                 {
+                    current.Red = nextRed;
                     break;
                 }
                 if (map[nextRed.r, nextRed.c - 1] == 'O')
                 {
                     current.Out = 1;
+                    current.Red = (nextRed.r, nextRed.c - 1);
                     break;
                 }
                 nextRed.c--;
             }
-            current.Red = nextRed;
 
             while (nextBlue.c >= 1)
             {
                 if (map[nextBlue.r, nextBlue.c - 1] == '#')
                 {
+                    current.Blue = nextBlue;
                     break;
                 }
                 if (map[nextBlue.r, nextBlue.c - 1] == 'O')
                 {
                     current.Out = -1;
+                    current.Blue = (nextBlue.r, nextBlue.c - 1);
                     break;
                 }
                 nextBlue.c--;
             }
-            current.Blue = nextBlue;
 
             if (current.Red == current.Blue && current.Out != -1)
             {
@@ -194,31 +200,33 @@
             {
                 if (map[nextRed.r, nextRed.c + 1] == '#')
                 {
+                    current.Red = nextRed;
                     break;
                 }
                 if (map[nextRed.r, nextRed.c + 1] == 'O')
                 {
                     current.Out = 1;
+                    current.Red = (nextRed.r, nextRed.c + 1);
                     break;
                 }
                 nextRed.c++;
             }
-            current.Red = nextRed;
 
             while (nextBlue.c < map.GetLength(1) - 1)
             {
                 if (map[nextBlue.r, nextBlue.c + 1] == '#')
                 {
+                    current.Blue = nextBlue;
                     break;
                 }
                 if (map[nextBlue.r, nextBlue.c + 1] == 'O')
                 {
                     current.Out = -1;
+                    current.Blue = (nextBlue.r, nextBlue.c + 1);
                     break;
                 }
                 nextBlue.c++;
             }
-            current.Blue = nextBlue;
 
             if (current.Red == current.Blue && current.Out != -1)
             {
@@ -249,10 +257,15 @@
             {
                 current = queue.Dequeue();
 
-                if (current.Moves > 10)
+                if (visited.Contains((current.Red, current.Blue)))
                 {
-                    return -1;
+                    continue;
                 }
+                else
+                {
+                    visited.Add((current.Red, current.Blue));
+                }
+
                 if (current.Out == 1)
                 {
                     return current.Moves;
@@ -261,12 +274,10 @@
                 {
                     continue;
                 }
-                if (visited.Contains((current.Red, current.Blue)))
+                if (current.Moves > 10)
                 {
                     continue;
                 }
-
-                visited.Add((current.Red, current.Blue));
 
                 queue.Enqueue(Up(current));
                 queue.Enqueue(Down(current));
@@ -279,34 +290,33 @@
     }
 
     internal class Program
-
-
-        private static char[,] GetInput()
     {
-        var sr = new StreamReader(Console.OpenStandardInput());
-        string[] firstInput = sr.ReadLine()!.Split(" ");
-        int row = int.Parse(firstInput[0]);
-        int column = int.Parse(firstInput[1]);
-        var map = new char[row, column];
-
-        for (int i = 0; i < row; i++)
+        private static char[,] GetInput()
         {
-            string input = sr.ReadLine()!;
+            var sr = new StreamReader(Console.OpenStandardInput());
+            string[] firstInput = sr.ReadLine()!.Split(" ");
+            int row = int.Parse(firstInput[0]);
+            int column = int.Parse(firstInput[1]);
+            var map = new char[row, column];
 
-            for (int j = 0; j < column; j++)
+            for (int i = 0; i < row; i++)
             {
-                map[i, j] = input[j];
+                string input = sr.ReadLine()!;
+
+                for (int j = 0; j < column; j++)
+                {
+                    map[i, j] = input[j];
+                }
             }
+
+            return map;
         }
 
-        return map;
+        private static void Main(string[] args)
+        {
+            var map = GetInput();
+            var ball = new Ball(map);
+            Console.WriteLine(ball.BFS());
+        }
     }
-
-    private static void Main(string[] args)
-    {
-        var map = GetInput();
-        var ball = new Ball(map);
-        Console.WriteLine(ball.BFS());
-    }
-}
 }
