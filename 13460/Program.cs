@@ -3,9 +3,8 @@
     public class Ball
     {
         private readonly char[,] map;
-        public readonly (int r, int c) red;
-        public readonly (int r, int c) blue;
-        public readonly (int r, int c) hole;
+        private readonly (int r, int c) red;
+        private readonly (int r, int c) blue;
 
         public Ball(char[,] map)
         {
@@ -23,199 +22,291 @@
                     {
                         blue = (i, j);
                     }
-                    if (map[i, j] == 'O')
-                    {
-                        hole = (i, j);
-                    }
                 }
             }
         }
 
-        public struct State
+        private struct State
         {
             public (int r, int c) Red { get; set; }
             public (int r, int c) Blue { get; set; }
             public int Moves { get; set; }
+
+            // 1: 성공 0: 일반 -1: 실패
+            public int Out { get; set; }
         }
 
-        public ((int r, int c), (int r, int c)) Up((int r, int c) red, (int r, int c) blue)
+        private State Up(State current)
         {
-            bool isRedFront = red.r < blue.r;
-            (int r, int c) = isRedFront ? red : blue;
+            var red = current.Red;
+            var blue = current.Blue;
+            var nextRed = red;
+            var nextBlue = blue;
 
-            while (r >= 1)
+            while (nextRed.r >= 1)
             {
-                r--;
-
-                if (map[r, c] == 'O')
+                if (map[nextRed.r - 1, nextRed.c] == '#')
                 {
-                    return isRedFront ? ((0, 0), (0, 0)) : ((-1, -1), (-1, -1));
+                    break;
                 }
-
-                if (map[r, c] == '#')
+                if (map[nextRed.r - 1, nextRed.c] == 'O')
                 {
-                    return isRedFront ? ((r + 1, c), (r + 2, c)) : ((r + 2, c), (r + 1, c));
+                    current.Out = 1;
+                    break;
                 }
+                nextRed.r--;
+            }
+            current.Red = nextRed;
+
+            while (nextBlue.r >= 1)
+            {
+                if (map[nextBlue.r - 1, nextBlue.c] == '#')
+                {
+                    break;
+                }
+                if (map[nextBlue.r - 1, nextBlue.c] == 'O')
+                {
+                    current.Out = -1;
+                    break;
+                }
+                nextBlue.r--;
+            }
+            current.Blue = nextBlue;
+
+            if (current.Red == current.Blue && current.Out != -1)
+            {
+                if (red.r > blue.r)
+                    current.Red = (nextRed.r + 1, nextRed.c);
+                else
+                    current.Blue = (nextBlue.r + 1, nextBlue.c);
             }
 
-            return ((-1, -1), (-1, -1));
+            current.Moves++;
+            return current;
         }
 
-        public ((int r, int c), (int r, int c)) Down((int r, int c) red, (int r, int c) blue)
+        private State Down(State current)
         {
-            bool isRedFront = red.r > blue.r;
-            (int r, int c) = isRedFront ? red : blue;
+            var red = current.Red;
+            var blue = current.Blue;
+            var nextRed = red;
+            var nextBlue = blue;
 
-            while (r <= map.GetLength(0) - 2)
+            while (nextRed.r < map.GetLength(0) - 1)
             {
-                r++;
-
-                if (map[r, c] == 'O')
+                if (map[nextRed.r + 1, nextRed.c] == '#')
                 {
-                    return isRedFront ? ((0, 0), (0, 0)) : ((-1, -1), (-1, -1));
+                    break;
                 }
-
-                if (map[r, c] == '#')
+                if (map[nextRed.r + 1, nextRed.c] == 'O')
                 {
-                    return isRedFront ? ((r - 1, c), (r - 2, c)) : ((r - 2, c), (r - 1, c));
+                    current.Out = 1;
+                    break;
                 }
+                nextRed.r++;
+            }
+            current.Red = nextRed;
+
+            while (nextBlue.r < map.GetLength(0) - 1)
+            {
+                if (map[nextBlue.r + 1, nextBlue.c] == '#')
+                {
+                    break;
+                }
+                if (map[nextBlue.r + 1, nextBlue.c] == 'O')
+                {
+                    current.Out = -1;
+                    break;
+                }
+                nextBlue.r++;
+            }
+            current.Blue = nextBlue;
+
+            if (current.Red == current.Blue && current.Out != -1)
+            {
+                if (red.r < blue.r)
+                    current.Red = (nextRed.r - 1, nextRed.c);
+                else
+                    current.Blue = (nextBlue.r - 1, nextBlue.c);
             }
 
-            return ((-1, -1), (-1, -1));
+            current.Moves++;
+            return current;
         }
 
-        public ((int r, int c), (int r, int c)) Left((int r, int c) red, (int r, int c) blue)
+        private State Left(State current)
         {
-            bool isRedFront = red.c < blue.c;
-            (int r, int c) = isRedFront ? red : blue;
+            var red = current.Red;
+            var blue = current.Blue;
+            var nextRed = red;
+            var nextBlue = blue;
 
-            while (c >= 1)
+            while (nextRed.c >= 1)
             {
-                c--;
-
-                if (map[r, c] == 'O')
+                if (map[nextRed.r, nextRed.c - 1] == '#')
                 {
-                    return isRedFront ? ((0, 0), (0, 0)) : ((-1, -1), (-1, -1));
+                    break;
                 }
-
-                if (map[r, c] == '#')
+                if (map[nextRed.r, nextRed.c - 1] == 'O')
                 {
-                    return isRedFront ? ((r, c + 1), (r, c + 2)) : ((r, c + 2), (r, c + 1));
+                    current.Out = 1;
+                    break;
                 }
+                nextRed.c--;
+            }
+            current.Red = nextRed;
+
+            while (nextBlue.c >= 1)
+            {
+                if (map[nextBlue.r, nextBlue.c - 1] == '#')
+                {
+                    break;
+                }
+                if (map[nextBlue.r, nextBlue.c - 1] == 'O')
+                {
+                    current.Out = -1;
+                    break;
+                }
+                nextBlue.c--;
+            }
+            current.Blue = nextBlue;
+
+            if (current.Red == current.Blue && current.Out != -1)
+            {
+                if (red.c > blue.c)
+                    current.Red = (nextRed.r, nextRed.c + 1);
+                else
+                    current.Blue = (nextBlue.r, nextBlue.c + 1);
             }
 
-            return ((-1, -1), (-1, -1));
+            current.Moves++;
+            return current;
         }
 
-        public ((int r, int c), (int r, int c)) Right((int r, int c) red, (int r, int c) blue)
+        private State Right(State current)
         {
-            bool isRedFront = red.c > blue.c;
-            (int r, int c) = isRedFront ? red : blue;
+            var red = current.Red;
+            var blue = current.Blue;
+            var nextRed = red;
+            var nextBlue = blue;
 
-            while (c <= map.GetLength(1) - 2)
+            while (nextRed.c < map.GetLength(1) - 1)
             {
-                c++;
-
-                if (map[r, c] == 'O')
+                if (map[nextRed.r, nextRed.c + 1] == '#')
                 {
-                    return isRedFront ? ((0, 0), (0, 0)) : ((-1, -1), (-1, -1));
+                    break;
                 }
-
-                if (map[r, c] == '#')
+                if (map[nextRed.r, nextRed.c + 1] == 'O')
                 {
-                    return isRedFront ? ((r, c - 1), (r, c - 2)) : ((r, c - 2), (r, c - 1));
+                    current.Out = 1;
+                    break;
                 }
+                nextRed.c++;
+            }
+            current.Red = nextRed;
+
+            while (nextBlue.c < map.GetLength(1) - 1)
+            {
+                if (map[nextBlue.r, nextBlue.c + 1] == '#')
+                {
+                    break;
+                }
+                if (map[nextBlue.r, nextBlue.c + 1] == 'O')
+                {
+                    current.Out = -1;
+                    break;
+                }
+                nextBlue.c++;
+            }
+            current.Blue = nextBlue;
+
+            if (current.Red == current.Blue && current.Out != -1)
+            {
+                if (red.r < blue.r)
+                    current.Red = (nextRed.r, nextRed.c + 1);
+                else
+                    current.Blue = (nextBlue.r, nextBlue.c + 1);
             }
 
-            return ((-1, -1), (-1, -1));
+            current.Moves++;
+            return current;
         }
 
         public int BFS()
         {
-            int count = int.MaxValue;
             var queue = new Queue<State>();
-            queue.Enqueue(new State
+            var visited = new HashSet<((int r, int c), (int r, int c))>();
+            var current = new State
             {
                 Red = red,
                 Blue = blue,
-                Moves = 0
-            });
+                Moves = 0,
+                Out = 0
+            };
+            queue.Enqueue(current);
 
             while (queue.Count > 0)
             {
-                var current = queue.Dequeue();
+                current = queue.Dequeue();
 
-                if (current.Red == (-1, -1))
+                if (current.Moves > 10)
+                {
+                    return -1;
+                }
+                if (current.Out == 1)
+                {
+                    return current.Moves;
+                }
+                if (current.Out == -1)
+                {
+                    continue;
+                }
+                if (visited.Contains((current.Red, current.Blue)))
                 {
                     continue;
                 }
 
-                if (current.Red == (0, 0) && current.Moves < count)
-                {
-                    count = current.Moves;
-                }
+                visited.Add((current.Red, current.Blue));
 
-                if (current.Moves < 10)
-                {
-                    queue.Enqueue(new State
-                    {
-                        Red = Up(current.Red, current.Blue).Item1,
-                        Blue = Up(current.Red, current.Blue).Item2,
-                        Moves = current.Moves + 1
-                    });
-                    queue.Enqueue(new State
-                    {
-                        Red = Down(current.Red, current.Blue).Item1,
-                        Blue = Down(current.Red, current.Blue).Item2,
-                        Moves = current.Moves + 1
-                    });
-                    queue.Enqueue(new State
-                    {
-                        Red = Left(current.Red, current.Blue).Item1,
-                        Blue = Left(current.Red, current.Blue).Item2,
-                        Moves = current.Moves + 1
-                    });
-                    queue.Enqueue(new State
-                    {
-                        Red = Right(current.Red, current.Blue).Item1,
-                        Blue = Right(current.Red, current.Blue).Item2,
-                        Moves = current.Moves + 1
-                    });
-                }
+                queue.Enqueue(Up(current));
+                queue.Enqueue(Down(current));
+                queue.Enqueue(Left(current));
+                queue.Enqueue(Right(current));
             }
 
-            return count;
+            return -1;
         }
     }
 
     internal class Program
-    {
+
+
         private static char[,] GetInput()
-        {
-            var sr = new StreamReader(Console.OpenStandardInput());
-            string[] firstInput = sr.ReadLine()!.Split(" ");
-            int row = int.Parse(firstInput[0]);
-            int column = int.Parse(firstInput[1]);
-            var map = new char[row, column];
+    {
+        var sr = new StreamReader(Console.OpenStandardInput());
+        string[] firstInput = sr.ReadLine()!.Split(" ");
+        int row = int.Parse(firstInput[0]);
+        int column = int.Parse(firstInput[1]);
+        var map = new char[row, column];
 
-            for (int i = 0; i < row; i++)
+        for (int i = 0; i < row; i++)
+        {
+            string input = sr.ReadLine()!;
+
+            for (int j = 0; j < column; j++)
             {
-                string input = sr.ReadLine()!;
-
-                for (int j = 0; j < column; j++)
-                {
-                    map[i, j] = input[j];
-                }
+                map[i, j] = input[j];
             }
-
-            return map;
         }
 
-        private static void Main(string[] args)
-        {
-            var map = GetInput();
-            var ball = new Ball(map);
-            Console.WriteLine(ball.BFS());
-        }
+        return map;
     }
+
+    private static void Main(string[] args)
+    {
+        var map = GetInput();
+        var ball = new Ball(map);
+        Console.WriteLine(ball.BFS());
+    }
+}
 }
