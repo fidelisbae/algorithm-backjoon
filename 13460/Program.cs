@@ -78,9 +78,9 @@
             if (current.Red == current.Blue && current.Out != -1)
             {
                 if (red.r > blue.r)
-                    current.Red = (nextRed.r + 1, nextRed.c);
+                    current.Red = (current.Red.r + 1, current.Red.c);
                 else
-                    current.Blue = (nextBlue.r + 1, nextBlue.c);
+                    current.Blue = (current.Blue.r + 1, current.Blue.c);
             }
 
             current.Moves++;
@@ -129,9 +129,9 @@
             if (current.Red == current.Blue && current.Out != -1)
             {
                 if (red.r < blue.r)
-                    current.Red = (nextRed.r - 1, nextRed.c);
+                    current.Red = (current.Red.r - 1, current.Red.c);
                 else
-                    current.Blue = (nextBlue.r - 1, nextBlue.c);
+                    current.Blue = (current.Blue.r - 1, current.Blue.c);
             }
 
             current.Moves++;
@@ -180,9 +180,9 @@
             if (current.Red == current.Blue && current.Out != -1)
             {
                 if (red.c > blue.c)
-                    current.Red = (nextRed.r, nextRed.c + 1);
+                    current.Red = (current.Red.r, current.Red.c + 1);
                 else
-                    current.Blue = (nextBlue.r, nextBlue.c + 1);
+                    current.Blue = (current.Blue.r, current.Blue.c + 1);
             }
 
             current.Moves++;
@@ -230,10 +230,10 @@
 
             if (current.Red == current.Blue && current.Out != -1)
             {
-                if (red.r < blue.r)
-                    current.Red = (nextRed.r, nextRed.c + 1);
+                if (red.c < blue.c)
+                    current.Red = (current.Red.r, current.Red.c - 1);
                 else
-                    current.Blue = (nextBlue.r, nextBlue.c + 1);
+                    current.Blue = (current.Blue.r, current.Blue.c - 1);
             }
 
             current.Moves++;
@@ -266,15 +266,15 @@
                     visited.Add((current.Red, current.Blue));
                 }
 
+                if (current.Moves > 10)
+                {
+                    continue;
+                }
                 if (current.Out == 1)
                 {
                     return current.Moves;
                 }
                 if (current.Out == -1)
-                {
-                    continue;
-                }
-                if (current.Moves > 10)
                 {
                     continue;
                 }
